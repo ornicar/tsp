@@ -4,7 +4,7 @@
 
 int TSPLib::m_nbPoints = 0 ;
 Point *TSPLib::m_points = NULL ;
-int **TSPLib::m_edges = NULL ;
+int *TSPLib::m_path = NULL ;
 
 
 //----------------------------------------------------------------------------------
@@ -13,17 +13,8 @@ TSPLib::freeMemory( void )
 {
     if( m_nbPoints>0 )
     {
-        if( m_edges!=NULL )
-        {
-            int i ;
-            for( i=0; i<m_nbPoints; i++ )
-            {
-                delete[] m_edges[i] ;
-            }
-            delete[] m_edges ;
-            m_edges = NULL ;
-        }
-
+        delete[] m_path ;
+        m_path = NULL ;
 
         delete[] m_points ;
         m_points = NULL ;
@@ -45,7 +36,7 @@ TSPLib::setInput( int nbPoints, Point * points )
     {
         // allocate memory
         m_points = new Point[m_nbPoints] ;
-        m_edges = new int*[m_nbPoints] ;
+        m_path = new int[m_nbPoints] ;
 
         int i ;
         for( i=0; i<m_nbPoints; i++ )
@@ -53,9 +44,6 @@ TSPLib::setInput( int nbPoints, Point * points )
             // copy points location
             m_points[i].x = points[i].x ;
             m_points[i].y = points[i].y ;
-
-            // allocate memory for edges
-            m_edges[i] = new int[2] ;
         }
     }
 }
@@ -68,9 +56,9 @@ TSPLib::computePath( void )
 
 //----------------------------------------------------------------------------------
 int*
-TSPLib::getConfiguration( void )
+TSPLib::getPath( void )
 {
-    return NULL ;
+    return m_path ;
 }
 
 //----------------------------------------------------------------------------------
