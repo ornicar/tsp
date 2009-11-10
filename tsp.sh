@@ -1,4 +1,4 @@
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"/home/dieu/Programmation/tsp":"/home/dieu/Programmation/tsp/TSPLib"
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:"../TSPLib"
 
 qtcreator dev.pro &
 
