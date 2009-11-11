@@ -1,5 +1,6 @@
 
 #include "tsplib.h"
+#include "graham.cpp"
 
 
 int TSPLib::m_nbPoints = 0 ;
@@ -99,8 +100,6 @@ TSPLib::setInput( int nbPoints, Point * points )
 int*
 TSPLib::getPath( void )
 {
-    printPath();
-
     return m_path ;
 }
 
@@ -140,6 +139,13 @@ TSPLib::getNbPoints( void )
 void
 TSPLib::computeEnveloppe( void )
 {
+    GrahamScan g( m_nbPoints, m_points );
+
+    g.partition_points();
+
+    g.build_hull();
+
+    g.debug();
 }
 
 //----------------------------------------------------------------------------------

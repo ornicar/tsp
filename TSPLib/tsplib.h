@@ -6,13 +6,6 @@
 #include <stdlib.h>
 
 
-typedef struct tPoint
-{
-    double x ;
-    double y ;
-} Point ;
-
-
 class TSPLIB_EXPORT TSPLib
 {
     protected :
