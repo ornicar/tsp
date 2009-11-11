@@ -5,6 +5,7 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QGraphicsRectItem>
+#include <QPainterPath>
 #include <QGraphicsPathItem>
 
 
@@ -45,9 +46,9 @@ TSPMainWindow::refreshView( void )
     m_scene.clear();
 
     int nbPoints = TSPLib::getNbPoints() ;
-    int nbEdges = TSPLib::getNbEdges() ;
     Point *points = TSPLib::getPoints() ;
     int *path = TSPLib::getPath() ;
+    int nbEdges = TSPLib::getNbEdges() ;
 
     // add points
     int iPoint ;
@@ -58,11 +59,19 @@ TSPMainWindow::refreshView( void )
     }
 
     // add edges
-    QGraphicsPathItem pathItem( NULL, &m_scene ) ;
-    int iEdge ;
-    for( iEdge=0; iEdge<nbEdges; iEdge++ )
+    QPainterPath painterPath ;
+    // init path
+    if( nbEdges>0 )
     {
+        painterPath.moveTo( points[path[0]].x, points[path[0]].y ) ;
     }
+    // connect following points
+    for( iPoint=1; iPoint<nbEdges; iPoint++ )
+    {
+        painterPath.lineTo( 100*points[path[iPoint]].x, 100*points[path[iPoint]].y ) ;
+    }
+
+    m_scene.addPath( painterPath, QPen(QColor(Qt::red)), QBrush() ) ;
 
     ui->pQt_graphicsView->setSceneRect( 0,0,100,100 ) ;
 }
