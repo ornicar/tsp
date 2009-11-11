@@ -16,11 +16,13 @@ TSPMainWindow::TSPMainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // resize scene view
-    m_scene.setSceneRect( 0.0, 0.0, 100.0, 100.0 ) ;
+    m_scene.setSceneRect( -5.0, -5.0, 110.0, 110.0 ) ;
     ui->pQt_graphicsView->setScene( &m_scene ) ;
+    ui->pQt_graphicsView->setResizeAnchor( QGraphicsView::AnchorViewCenter ) ;
 
     //
-    connect(ui->pQt_actionOpen, SIGNAL(triggered()), this, SLOT(openFile())) ;
+    connect( ui->pQt_actionOpen, SIGNAL(triggered()), this, SLOT(openFile()) ) ;
+    connect( ui->pQt_actionRun, SIGNAL(triggered()), this, SLOT(run()) ) ;
 
     //
     this->readFile( "../defi250.csv" ) ;
@@ -36,7 +38,8 @@ TSPMainWindow::~TSPMainWindow()
 void
 TSPMainWindow::run( void )
 {
-    int *path = TSPLib::getPath() ;
+    TSPLib::computePath() ;
+    refreshView();
 }
 
 //----------------------------------------------------------------------------------
@@ -52,9 +55,12 @@ TSPMainWindow::refreshView( void )
 
     // add points
     int iPoint ;
+    QBrush brush ;
+    brush.setStyle( Qt::SolidPattern ) ;
+    QPen pen = QPen(QColor(Qt::green)) ;
     for( iPoint=0; iPoint<nbPoints; iPoint++ )
     {
-        QGraphicsRectItem *pPointItem = m_scene.addRect( 100*points[iPoint].x, 100*points[iPoint].y, 3, 3 ) ;
+        QGraphicsRectItem *pPointItem = m_scene.addRect( 100*points[iPoint].x, 100*points[iPoint].y, 2, 2, pen, brush ) ;
         //QGraphicsRectItem *pPointItem = m_scene.addRect( iPoint, iPoint, 0.05, 0.05 ) ;
     }
 
@@ -63,17 +69,23 @@ TSPMainWindow::refreshView( void )
     // init path
     if( nbEdges>0 )
     {
-        painterPath.moveTo( points[path[0]].x, points[path[0]].y ) ;
-    }
-    // connect following points
-    for( iPoint=1; iPoint<nbEdges; iPoint++ )
-    {
-        painterPath.lineTo( 100*points[path[iPoint]].x, 100*points[path[iPoint]].y ) ;
+        painterPath.moveTo( 100*points[path[0]].x, 100*points[path[0]].y ) ;
+
+        // connect following points
+        for( iPoint=1; iPoint<nbEdges; iPoint++ )
+        {
+            painterPath.lineTo( 100*points[path[iPoint]].x, 100*points[path[iPoint]].y ) ;
+        }
+
+        // connect last edge
+        painterPath.lineTo( 100*points[path[0]].x, 100*points[path[0]].y ) ;
     }
 
-    m_scene.addPath( painterPath, QPen(QColor(Qt::red)), QBrush() ) ;
+    pen.setColor( QColor(Qt::red) ) ;
+    brush.setStyle( Qt::NoBrush ) ;
+    m_scene.addPath( painterPath, pen, brush ) ;
 
-    ui->pQt_graphicsView->setSceneRect( 0,0,100,100 ) ;
+    ui->pQt_graphicsView->fitInView( 0,0,100,100, Qt::KeepAspectRatio ) ;
 }
 
 //----------------------------------------------------------------------------------
