@@ -30,6 +30,8 @@ public:
 public slots :
 
     bool openFile( QString path="" ) ;
+    void computeEnvelope( void ) ;
+    void splitNextEdges( void ) ;
     void run( void ) ;
     void refreshView( void ) ;
 };

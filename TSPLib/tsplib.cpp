@@ -22,10 +22,10 @@ TSPLib::computePath( void )
     //computeRandomPath() ;
 
     // compute enveloppe
-    computeEnveloppe();
+    computeEnvelope();
 
     // reduce enveloppe
-    //reduceEnveloppe() ;
+    reduceEnvelope( 100 ) ;
 }
 
 //----------------------------------------------------------------------------------
@@ -137,7 +137,7 @@ TSPLib::getNbPoints( void )
 
 //----------------------------------------------------------------------------------
 void
-TSPLib::computeEnveloppe( void )
+TSPLib::computeEnvelope( void )
 {
     GrahamScan g( m_nbPoints, m_points );
 
@@ -256,12 +256,12 @@ TSPLib::getEdgeWithLowerCost( void )
 
 //----------------------------------------------------------------------------------
 void
-TSPLib::reduceEnveloppe( void )
+TSPLib::reduceEnvelope( int nbSteps )
 {    
     // compute nearest point for each edge
     computeNearestPoints( 0, m_nbEdges ) ;
 
-    while( m_nbEdges<m_nbPoints )
+    while( nbSteps>0 && m_nbEdges<m_nbPoints )
     {
         // get edge to split
         int iEdge = getEdgeWithLowerCost() ;
@@ -284,6 +284,9 @@ TSPLib::reduceEnveloppe( void )
 
             // update edge count
             m_nbEdges++ ;
+
+            // decrease step count
+            nbSteps-- ;
 
             // compute nearest points for the 2 new edges
             computeNearestPoints( iEdge, 1 ) ;

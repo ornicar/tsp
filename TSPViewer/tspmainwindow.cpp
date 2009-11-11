@@ -23,6 +23,8 @@ TSPMainWindow::TSPMainWindow(QWidget *parent)
     //
     connect( ui->pQt_actionOpen, SIGNAL(triggered()), this, SLOT(openFile()) ) ;
     connect( ui->pQt_actionRun, SIGNAL(triggered()), this, SLOT(run()) ) ;
+    connect( ui->pQt_actionComputeEnveloppe, SIGNAL(triggered()), this, SLOT(computeEnvelope()) ) ;
+    connect( ui->pQt_actionSplitEdge, SIGNAL(triggered()), this, SLOT(splitNextEdges()) ) ;
 
     //
     this->readFile( "../defi250.csv" ) ;
@@ -32,6 +34,25 @@ TSPMainWindow::TSPMainWindow(QWidget *parent)
 TSPMainWindow::~TSPMainWindow()
 {
     delete ui;
+}
+
+//----------------------------------------------------------------------------------
+void
+TSPMainWindow::computeEnvelope( void )
+{
+    TSPLib::computeEnvelope() ;
+
+    refreshView();
+}
+
+//----------------------------------------------------------------------------------
+void
+TSPMainWindow::splitNextEdges( void )
+{
+    int nbSteps = ui->pQt_spinNbSteps->value() ;
+    TSPLib::reduceEnvelope( nbSteps ) ;
+
+    refreshView();
 }
 
 //----------------------------------------------------------------------------------

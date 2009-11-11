@@ -1,5 +1,7 @@
 <RCC>
   <qresource>
+    <file>icons/enveloppe.png</file>
+    <file>icons/step.png</file>
     <file>icons/about.png</file>
     <file>icons/run.png</file>
     <file>icons/open.png</file>

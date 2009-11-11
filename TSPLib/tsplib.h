@@ -29,11 +29,12 @@ class TSPLIB_EXPORT TSPLib
             static int getNbPoints( void ) ;
             static Point* getPoints( void ) ;
 
+            static void computeEnvelope( void ) ;
+            static void reduceEnvelope( int nbSteps ) ;
+
     protected :
 
             static void freeMemory( void ) ;
-            static void computeEnveloppe( void ) ;
-            static void reduceEnveloppe( void ) ;
             static void updateFreePointsSet( void ) ;
             static void computeNearestPoints( int iStart=0, int nbEdges=1 ) ;
             static int getEdgeWithLowerCost( void ) ;
