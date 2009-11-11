@@ -7,7 +7,7 @@ Point *TSPLib::m_points = NULL ;
 int *TSPLib::m_path = NULL ;
 
 
-//--------hihi!!-breuzablorg--------------------------------------------------------------------------
+//--------hihi!!-breuzablorg-hoho--------------------------------------------------------------------------
 void
 TSPLib::freeMemory( void )
 {
