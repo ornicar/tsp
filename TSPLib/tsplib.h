@@ -42,6 +42,7 @@ class TSPLIB_EXPORT TSPLib
             static int getEdgeWithLowerCost( void ) ;
             static void computeRandomPath( void ) ;
             static void printPath( void );
+            static void printFreePoints( void ) ;
 } ;
 
 #endif // _TSPLIB_H_

@@ -27,7 +27,7 @@ TSPMainWindow::TSPMainWindow(QWidget *parent)
     connect( ui->pQt_actionSplitEdge, SIGNAL(triggered()), this, SLOT(splitNextEdges()) ) ;
 
     //
-    this->readFile( "../defi250.csv" ) ;
+    this->readFile( "defi25.csv" ) ;
 }
 
 //----------------------------------------------------------------------------------
