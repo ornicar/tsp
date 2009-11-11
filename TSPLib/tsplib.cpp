@@ -145,7 +145,7 @@ TSPLib::computeEnveloppe( void )
 
     g.build_hull();
 
-    g.debug();
+    m_path = g.getPath(m_nbEdges);
 }
 
 //----------------------------------------------------------------------------------
