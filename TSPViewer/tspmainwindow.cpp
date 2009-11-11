@@ -16,7 +16,7 @@ TSPMainWindow::TSPMainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // resize scene view
-    m_scene.setSceneRect( -0.05, -0.05, 1.1, 1.1 ) ;
+    m_scene.setSceneRect( -0.05*TSP_SCALE_FACTOR, -0.05*TSP_SCALE_FACTOR, 1.1*TSP_SCALE_FACTOR, 1.1*TSP_SCALE_FACTOR ) ;
     ui->pQt_graphicsView->setScene( &m_scene ) ;
     ui->pQt_graphicsView->setResizeAnchor( QGraphicsView::AnchorViewCenter ) ;
 
@@ -55,37 +55,55 @@ TSPMainWindow::refreshView( void )
 
     // add points
     int iPoint ;
-    double offset = 0.5*TSP_POINT_SIZE ;
+    double offset = 0 ;//0.5*TSP_POINT_SIZE ;
     QBrush brush ;
     brush.setStyle( Qt::SolidPattern ) ;
     QPen pen = QPen(QColor(Qt::green)) ;
+    QFont font ;
+    font.setPointSizeF( 1.5 ) ;
+
+    QPoint textPos ;
     for( iPoint=0; iPoint<nbPoints; iPoint++ )
     {
-        QGraphicsRectItem *pPointItem = m_scene.addRect( points[iPoint].x-offset, points[iPoint].y-offset, TSP_POINT_SIZE, TSP_POINT_SIZE, pen, brush ) ;
+        double xPos = TSP_SCALE_FACTOR*(points[iPoint].x-offset) ;
+        double yPos = TSP_SCALE_FACTOR*(points[iPoint].y-offset) ;
+
+        QGraphicsRectItem *pPointItem = m_scene.addRect( xPos, yPos, TSP_POINT_SIZE, TSP_POINT_SIZE, pen, brush ) ;
+
+        QGraphicsSimpleTextItem *pTextItem = new QGraphicsSimpleTextItem( QString::number(iPoint), NULL, &m_scene ) ;
+        pTextItem->setPos( xPos+1.5, yPos ) ;
+        pTextItem->setFont( font ) ;
     }
 
     // add edges
     QPainterPath painterPath ;
     // init path
     if( nbEdges>0 )
-    {        
-        painterPath.moveTo( points[path[0]].x, points[path[0]].y ) ;
+    {
+        double xPos = TSP_SCALE_FACTOR*( points[path[0]].x-offset ) ;
+        double yPos = TSP_SCALE_FACTOR*( points[path[0]].y-offset ) ;
+        painterPath.moveTo( xPos, yPos ) ;
 
         // connect following points
         for( iPoint=1; iPoint<nbEdges; iPoint++ )
         {
-            painterPath.lineTo( points[path[iPoint]].x, points[path[iPoint]].y ) ;
+            xPos = TSP_SCALE_FACTOR*( points[path[iPoint]].x-offset ) ;
+            yPos = TSP_SCALE_FACTOR*( points[path[iPoint]].y-offset ) ;
+
+            painterPath.lineTo( xPos, yPos ) ;
         }
 
         // connect last edge
-        painterPath.lineTo( points[path[0]].x, points[path[0]].y ) ;
+        xPos = TSP_SCALE_FACTOR*( points[path[0]].x-offset ) ;
+        yPos = TSP_SCALE_FACTOR*( points[path[0]].y-offset ) ;
+        painterPath.lineTo( xPos, yPos ) ;
     }
 
     pen.setColor( QColor(Qt::red) ) ;
     brush.setStyle( Qt::NoBrush ) ;
     m_scene.addPath( painterPath, pen, brush ) ;
 
-    ui->pQt_graphicsView->fitInView( 0,0,1,1, Qt::KeepAspectRatio ) ;
+    ui->pQt_graphicsView->fitInView( 0.0, 0.0, TSP_SCALE_FACTOR, TSP_SCALE_FACTOR, Qt::KeepAspectRatio ) ;
 }
 
 //----------------------------------------------------------------------------------
