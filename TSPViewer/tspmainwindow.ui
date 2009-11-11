@@ -32,7 +32,7 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="2">
+    <item row="0" column="3">
      <spacer name="horizontalSpacer">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -45,8 +45,15 @@
       </property>
      </spacer>
     </item>
-    <item row="1" column="0" colspan="3">
+    <item row="1" column="0" colspan="4">
      <widget class="QGraphicsView" name="pQt_graphicsView"/>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLabel" name="pQt_label_distance">
+      <property name="text">
+       <string>distance</string>
+      </property>
+     </widget>
     </item>
    </layout>
   </widget>

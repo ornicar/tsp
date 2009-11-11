@@ -69,6 +69,8 @@ TSPMainWindow::refreshView( void )
 {
     m_scene.clear();
 
+    ui->pQt_label_distance->setText(QString::number(TSPLib::getPathLength()));
+
     int nbPoints = TSPLib::getNbPoints() ;
     Point *points = TSPLib::getPoints() ;
     int *path = TSPLib::getPath() ;

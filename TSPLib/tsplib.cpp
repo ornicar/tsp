@@ -1,7 +1,7 @@
 
 #include "tsplib.h"
 #include "graham.cpp"
-
+#include <math.h>
 
 int TSPLib::m_nbPoints = 0 ;
 int TSPLib::m_nbEdges = 0 ;
@@ -19,8 +19,6 @@ double *TSPLib::m_bestPointsDistance = NULL ;
 void
 TSPLib::computePath( void )
 {
-    //computeRandomPath() ;
-
     // compute enveloppe
     computeEnvelope();
 
@@ -39,6 +37,31 @@ TSPLib::computeRandomPath( void )
         m_path[i] = i;
     }
     m_nbEdges = m_nbPoints ;
+}
+
+//----------------------------------------------------------------------------------
+double
+TSPLib::getPathLength( void )
+{
+    if ( m_nbEdges < 2 )
+    {
+        return 0.0;
+    }
+
+    int i;
+    double length = 0.0, dx, dy;
+    Point point1, point2;
+    for(i=0; i<m_nbEdges; i++)
+    {
+        point1 = m_points[m_path[i]] ;
+        point2 = m_points[m_path[(i+1)%m_nbEdges]] ;
+
+        dx = point2.x - point1.x ;
+        dy = point2.y - point1.y ;
+        length += sqrt( (dx*dx)+(dy*dy) ) ;
+    }
+
+    return length;
 }
 
 //----------------------------------------------------------------------------------

@@ -32,6 +32,8 @@ class TSPLIB_EXPORT TSPLib
             static void computeEnvelope( void ) ;
             static void reduceEnvelope( int nbSteps ) ;
 
+            static double getPathLength( void ) ;
+
     protected :
 
             static void freeMemory( void ) ;
