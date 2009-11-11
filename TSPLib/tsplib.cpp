@@ -13,7 +13,7 @@ int *TSPLib::m_path = NULL ;
 void
 TSPLib::computePath( void )
 {
-    computeRandomPath();
+    computeRandomPath() ;
 }
 
 //----------------------------------------------------------------------------------
@@ -26,6 +26,7 @@ TSPLib::computeRandomPath( void )
     {
         m_path[i] = i;
     }
+    m_nbEdges = m_nbPoints ;
 }
 
 //----------------------------------------------------------------------------------
