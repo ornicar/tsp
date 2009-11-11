@@ -11,6 +11,7 @@ int *TSPLib::m_path = NULL ;
 void
 TSPLib::freeMemory( void )
 {
+    // free memory
     if( m_nbPoints>0 )
     {
         delete[] m_path ;

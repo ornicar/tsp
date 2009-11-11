@@ -43,6 +43,8 @@ void
 TSPMainWindow::refreshView( void )
 {
     m_scene.clear() ;
+    m_scene.setSceneRect( 0.0, 0.0, 1.0, 1.0 ) ;
+    ui->pQt_graphicsView->setSceneRect( 0.0, 0.0, 1.0, 1.0 ) ;
 
     int nbPoints = TSPLib::getNbPoints() ;
     Point *points = TSPLib::getPoints() ;
@@ -52,7 +54,10 @@ TSPMainWindow::refreshView( void )
     for( iPoint=0; iPoint<nbPoints; iPoint++ )
     {
         QGraphicsRectItem *pPointItem = m_scene.addRect( points[iPoint].x, points[iPoint].y, 0.05, 0.05 ) ;
+        //QGraphicsRectItem *pPointItem = m_scene.addRect( iPoint, iPoint, 0.05, 0.05 ) ;
     }
+
+    ui->pQt_graphicsView->fitInView( 0.0, 0.0, 1.0, 1.0 ) ;
 }
 
 //----------------------------------------------------------------------------------
