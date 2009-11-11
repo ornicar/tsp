@@ -33,6 +33,8 @@ class TSPLIB_EXPORT TSPLib
             static void freeMemory( void ) ;
             static void computeEnveloppe( void ) ;
             static void computePath( void ) ;
+            static void computeRandomPath( void ) ;
+            static void printPath( void );
 } ;
 
 #endif // _TSPLIB_H_
