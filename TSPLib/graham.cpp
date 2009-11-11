@@ -49,21 +49,23 @@ public:
         for(i=0; i<max; i++)
         {
             path[nbEdges] = findIndexByCoords(lower_hull[i].first, lower_hull[i].second);
+            qDebug("l-> %d", path[nbEdges]);
             nbEdges++;
         }
 
-        max = upper_hull.size()-1;
-        for(i=max; i>1; i--)
+        max = upper_hull.size()-2;
+        for(i=max; i>0; i--)
         {
             path[nbEdges] = findIndexByCoords(upper_hull[i].first, upper_hull[i].second);
+            qDebug("u-> %d", path[nbEdges]);
             nbEdges++;
         }
 
-        qDebug("%s", "indices");
-        for(i=0; i<nbEdges; i++)
-        {
-            qDebug("%d", path[i]);
-        }
+//        qDebug("%s", "indices");
+//        for(i=0; i<nbEdges; i++)
+//        {
+//            qDebug("%d", path[i]);
+//        }
 
         return path;
     }

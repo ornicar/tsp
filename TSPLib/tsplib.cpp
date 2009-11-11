@@ -25,7 +25,7 @@ TSPLib::computePath( void )
     computeEnveloppe();
 
     // reduce enveloppe
-    reduceEnveloppe() ;
+    //reduceEnveloppe() ;
 }
 
 //----------------------------------------------------------------------------------
