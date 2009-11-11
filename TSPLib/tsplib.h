@@ -25,6 +25,8 @@ class TSPLIB_EXPORT TSPLib
 
             static void setInput( int nbPoints, Point * points ) ;
             static int* getPath( void ) ;
+            static int getNbPoints( void ) ;
+            static Point* getPoints( void ) ;
 
     protected :
 

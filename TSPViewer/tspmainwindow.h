@@ -2,6 +2,7 @@
 #define TSPMAINWINDOW_H
 
 #include <QtGui/QMainWindow>
+#include <QGraphicsScene>
 
 namespace Ui
 {
@@ -14,6 +15,7 @@ class TSPMainWindow : public QMainWindow
 
 private:
     Ui::TSPMainWindow *ui;
+    QGraphicsScene  m_scene ;
 
 public:
 
@@ -26,6 +28,7 @@ public slots :
 
     bool openFile( QString path="" ) ;
     void run( void ) ;
+    void refreshView( void ) ;
 };
 
 #endif // TSPMAINWINDOW_H

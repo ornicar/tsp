@@ -4,6 +4,7 @@
 
 #include <QFileDialog>
 #include <QTextStream>
+#include <QGraphicsRectItem>
 
 
 //----------------------------------------------------------------------------------
@@ -12,8 +13,16 @@ TSPMainWindow::TSPMainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    // resize scene view
+    m_scene.setSceneRect( 0.0, 0.0, 1.0, 1.0 ) ;
+    ui->pQt_graphicsView->setScene( &m_scene ) ;
+    ui->pQt_graphicsView->setSceneRect( 0.0, 0.0, 1.0, 1.0 ) ;
+
     //
     connect(ui->pQt_actionOpen, SIGNAL(triggered()), this, SLOT(openFile())) ;
+
+    //
+    this->readFile( "../defi250.csv" ) ;
 }
 
 //----------------------------------------------------------------------------------
@@ -26,7 +35,24 @@ TSPMainWindow::~TSPMainWindow()
 void
 TSPMainWindow::run( void )
 {
-    TSPLib::computePath() ;
+    int *path = TSPLib::getPath() ;
+}
+
+//----------------------------------------------------------------------------------
+void
+TSPMainWindow::refreshView( void )
+{
+    m_scene.clear() ;
+
+    int nbPoints = TSPLib::getNbPoints() ;
+    Point *points = TSPLib::getPoints() ;
+    int *path = TSPLib::getPath() ;
+
+    int iPoint ;
+    for( iPoint=0; iPoint<nbPoints; iPoint++ )
+    {
+        QGraphicsRectItem *pPointItem = m_scene.addRect( points[iPoint].x, points[iPoint].y, 0.05, 0.05 ) ;
+    }
 }
 
 //----------------------------------------------------------------------------------
@@ -67,18 +93,29 @@ TSPMainWindow::readFile( const QString & path )
 
             // read cities' location
             int iPoint=0 ;
+            QString line ;
             while( stream.atEnd()==false )
             {
-                QString line = stream.readLine() ;
-                QStringList coords = line.split( ';', QString::SkipEmptyParts ) ;
-                points[iPoint].x = coords.at(0).toDouble() ;
-                points[iPoint].y = coords.at(1).toDouble() ;
+                stream >> line ;
+                if( line.isNull()==false )
+                {
+                    QStringList coords = line.split( ';', QString::SkipEmptyParts ) ;
+                    points[iPoint].x = coords.at(0).toDouble() ;
+                    points[iPoint].y = coords.at(1).toDouble() ;
 
-                iPoint++ ;
+                    iPoint++ ;
+                }
+                else
+                {
+                    qWarning( "fin fichier\n" ) ;
+                }
             }
 
             //
             TSPLib::setInput( nbPoints, points ) ;
+
+            // refresh view
+            refreshView() ;
 
             // free memory
             delete[] points ;
