@@ -1,4 +1,8 @@
-<!DOCTYPE RCC><RCC version="1.0">
- <qresource>
- </qresource>
- </RCC>
+<RCC>
+  <qresource>
+    <file>icons/about.png</file>
+    <file>icons/run.png</file>
+    <file>icons/open.png</file>
+    <file>icons/quit.png</file>
+  </qresource>
+</RCC>

@@ -16,7 +16,7 @@ TSPMainWindow::TSPMainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // resize scene view
-    m_scene.setSceneRect( -5.0, -5.0, 110.0, 110.0 ) ;
+    m_scene.setSceneRect( -0.05, -0.05, 1.1, 1.1 ) ;
     ui->pQt_graphicsView->setScene( &m_scene ) ;
     ui->pQt_graphicsView->setResizeAnchor( QGraphicsView::AnchorViewCenter ) ;
 
@@ -55,37 +55,37 @@ TSPMainWindow::refreshView( void )
 
     // add points
     int iPoint ;
+    double offset = 0.5*TSP_POINT_SIZE ;
     QBrush brush ;
     brush.setStyle( Qt::SolidPattern ) ;
     QPen pen = QPen(QColor(Qt::green)) ;
     for( iPoint=0; iPoint<nbPoints; iPoint++ )
     {
-        QGraphicsRectItem *pPointItem = m_scene.addRect( 100*points[iPoint].x, 100*points[iPoint].y, 2, 2, pen, brush ) ;
-        //QGraphicsRectItem *pPointItem = m_scene.addRect( iPoint, iPoint, 0.05, 0.05 ) ;
+        QGraphicsRectItem *pPointItem = m_scene.addRect( points[iPoint].x-offset, points[iPoint].y-offset, TSP_POINT_SIZE, TSP_POINT_SIZE, pen, brush ) ;
     }
 
     // add edges
     QPainterPath painterPath ;
     // init path
     if( nbEdges>0 )
-    {
-        painterPath.moveTo( 100*points[path[0]].x, 100*points[path[0]].y ) ;
+    {        
+        painterPath.moveTo( points[path[0]].x, points[path[0]].y ) ;
 
         // connect following points
         for( iPoint=1; iPoint<nbEdges; iPoint++ )
         {
-            painterPath.lineTo( 100*points[path[iPoint]].x, 100*points[path[iPoint]].y ) ;
+            painterPath.lineTo( points[path[iPoint]].x, points[path[iPoint]].y ) ;
         }
 
         // connect last edge
-        painterPath.lineTo( 100*points[path[0]].x, 100*points[path[0]].y ) ;
+        painterPath.lineTo( points[path[0]].x, points[path[0]].y ) ;
     }
 
     pen.setColor( QColor(Qt::red) ) ;
     brush.setStyle( Qt::NoBrush ) ;
     m_scene.addPath( painterPath, pen, brush ) ;
 
-    ui->pQt_graphicsView->fitInView( 0,0,100,100, Qt::KeepAspectRatio ) ;
+    ui->pQt_graphicsView->fitInView( 0,0,1,1, Qt::KeepAspectRatio ) ;
 }
 
 //----------------------------------------------------------------------------------

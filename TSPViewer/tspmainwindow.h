@@ -4,6 +4,8 @@
 #include <QtGui/QMainWindow>
 #include <QGraphicsScene>
 
+#define TSP_POINT_SIZE 0.02
+
 namespace Ui
 {
     class TSPMainWindow;
