@@ -3,6 +3,7 @@
 
 
 int TSPLib::m_nbPoints = 0 ;
+int TSPLib::m_nbEdges = 0 ;
 Point *TSPLib::m_points = NULL ;
 int *TSPLib::m_path = NULL ;
 
@@ -16,6 +17,7 @@ TSPLib::freeMemory( void )
     {
         delete[] m_path ;
         m_path = NULL ;
+        m_nbEdges = 0 ;
 
         delete[] m_points ;
         m_points = NULL ;
@@ -60,6 +62,13 @@ int*
 TSPLib::getPath( void )
 {
     return m_path ;
+}
+
+//----------------------------------------------------------------------------------
+int
+TSPLib::getNbEdges( void )
+{
+    return m_nbEdges ;
 }
 
 //----------------------------------------------------------------------------------

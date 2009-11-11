@@ -19,11 +19,13 @@ class TSPLIB_EXPORT TSPLib
 
             static int m_nbPoints ;
             static Point *m_points ;
+            static int m_nbEdges ;
             static int *m_path ;
 
     public :
 
             static void setInput( int nbPoints, Point * points ) ;
+            static int getNbEdges( void ) ;
             static int* getPath( void ) ;
             static int getNbPoints( void ) ;
             static Point* getPoints( void ) ;
