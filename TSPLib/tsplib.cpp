@@ -1,6 +1,7 @@
 
 #include "tsplib.h"
 #include "graham.cpp"
+#include "xlines.h"
 #include <math.h>
 
 int TSPLib::m_nbPoints = 0 ;
@@ -154,6 +155,25 @@ TSPLib::printFreePoints( void )
 }
 
 //----------------------------------------------------------------------------------
+bool
+TSPLib::intersect( int idx1, int idx2, int idx3, int idx4 )
+{
+    double x, y ;
+
+    int result = lines_intersect(   m_points[idx1].x, m_points[idx1].y,
+                                    m_points[idx2].x, m_points[idx2].y,
+                                    m_points[idx3].x, m_points[idx3].y,
+                                    m_points[idx4].x, m_points[idx4].y,
+                                    x, y ) ;
+    if( result==DO_INTERSECT )
+    {
+        return true ;
+    }
+
+    return false ;
+}
+
+//----------------------------------------------------------------------------------
 int
 TSPLib::getNbEdges( void )
 {
@@ -228,7 +248,7 @@ TSPLib::computeNearestPoints( int iStart, int nbEdges )
 {
     // retrieve free points
     updateFreePointsSet() ;
-    printFreePoints() ;
+    //printFreePoints() ;
 
     //
     int iPoint, idx1, idx2, idxFree, iFreePoint, bestPoint ;
@@ -254,26 +274,48 @@ TSPLib::computeNearestPoints( int iStart, int nbEdges )
         {
             idxFree = m_freePoints[iFreePoint] ;
 
-            // compute from idx1 to free point
-            dx = m_points[idxFree].x - m_points[idx1].x ;
-            dy = m_points[idxFree].y - m_points[idx1].y ;
-            dist1 = sqrt( (dx*dx)+(dy*dy) ) ;
-
-            // compute from free point to idx2
-            dx = m_points[idx2].x - m_points[idxFree].x ;
-            dy = m_points[idx2].y - m_points[idxFree].y ;
-            dist2 = sqrt( (dx*dx)+(dy*dy) ) ;
-
-            // save best result
-            if( min>(dist1+dist2-dist0) )
+            // test intersection
+            int iEdge ;
+            bool intersection = false ;
+            for( iEdge=0; iEdge<m_nbEdges; iEdge++ )
             {
-                min = dist1+dist2-dist0 ;
-                bestPoint = idxFree ;
+                int idxEdge1 = m_path[iEdge] ;
+                int idxEdge2 = m_path[(iEdge+1)%m_nbEdges] ;
+                if( (idxEdge1!=idx1) && (idxEdge1!=idx2) &&
+                    (idxEdge2!=idx1) && (idxEdge2!=idx2) )
+                {
+                    if( intersect( idx1, idxFree, m_path[iEdge], m_path[(iEdge+1)%m_nbEdges] )==true ||
+                        intersect( idxFree, idx2, m_path[iEdge], m_path[(iEdge+1)%m_nbEdges] )==true )
+                    {
+                        intersection = true ;
+                        break ;
+                    }
+                }
+            }
+
+            if( intersection==false )
+            {
+                // compute from idx1 to free point
+                dx = m_points[idxFree].x - m_points[idx1].x ;
+                dy = m_points[idxFree].y - m_points[idx1].y ;
+                dist1 = sqrt( (dx*dx)+(dy*dy) ) ;
+
+                // compute from free point to idx2
+                dx = m_points[idx2].x - m_points[idxFree].x ;
+                dy = m_points[idx2].y - m_points[idxFree].y ;
+                dist2 = sqrt( (dx*dx)+(dy*dy) ) ;
+
+                // save best result
+                if( min>(dist1+dist2-dist0) )
+                {
+                    min = dist1+dist2-dist0 ;
+                    bestPoint = idxFree ;
+                }
             }
         }
 
         // save best free point
-        fprintf( stderr, "[TSPLib::computeNearestPoints] best for edge[%d,%d] = %d with %f\n", idx1, idx2, bestPoint, min ) ;
+        //fprintf( stderr, "[TSPLib::computeNearestPoints] best for edge[%d,%d] = %d with %f\n", idx1, idx2, bestPoint, min ) ;
         m_bestPoints[iPoint] = bestPoint ;
         m_bestPointsDistance[iPoint] = min ;
     }
@@ -299,6 +341,25 @@ TSPLib::getEdgeWithLowerCost( void )
 }
 
 //----------------------------------------------------------------------------------
+int
+TSPLib::getEdgeWithUpperCost( void )
+{
+    int iCost, result = -1 ;
+    double max = -1.0 ;
+
+    for( iCost=0; iCost<m_nbEdges; iCost++ )
+    {
+        if( m_bestPointsDistance[iCost]>max )
+        {
+            max = m_bestPointsDistance[iCost] ;
+            result = iCost ;
+        }
+    }
+
+    return result ;
+}
+
+//----------------------------------------------------------------------------------
 void
 TSPLib::reduceEnvelope( int nbSteps )
 {
@@ -307,19 +368,15 @@ TSPLib::reduceEnvelope( int nbSteps )
         // get edge to split
         int iEdge = getEdgeWithLowerCost() ;
 
-        printPath();
-        fprintf( stderr, "[TSPLib::reduceEnvelope] best edge = [%d %d]\n", m_path[iEdge], m_path[(iEdge+1)%m_nbEdges] ) ;
-        if( m_nbEdges==m_nbPoints-1 )
-        {
-            fprintf( stderr, "[TSPLib::reduceEnvelope] last point\n" ) ;
-        }
+        //printPath();
+        //fprintf( stderr, "[TSPLib::reduceEnvelope] best edge = [%d %d]\n", m_path[iEdge], m_path[(iEdge+1)%m_nbEdges] ) ;
 
         if( iEdge>=0 )
         {
             // split the edge
             //---------------
             int iPoint ;
-            printPath();
+            //printPath();
             // shift left edges and related stuff
             for( iPoint=m_nbEdges; iPoint>iEdge+1; iPoint-- )
             {
@@ -333,7 +390,7 @@ TSPLib::reduceEnvelope( int nbSteps )
 
             // update edge count
             m_nbEdges++ ;
-            printPath();
+            //printPath();
 
             // decrease step count
             nbSteps-- ;

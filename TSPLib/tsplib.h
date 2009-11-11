@@ -40,9 +40,11 @@ class TSPLIB_EXPORT TSPLib
             static void updateFreePointsSet( void ) ;
             static void computeNearestPoints( int iStart=0, int nbEdges=1 ) ;
             static int getEdgeWithLowerCost( void ) ;
+            static int getEdgeWithUpperCost( void ) ;
             static void computeRandomPath( void ) ;
             static void printPath( void );
             static void printFreePoints( void ) ;
+            static bool intersect( int idx1, int idx2, int idx3, int idx4 ) ;
 } ;
 
 #endif // _TSPLIB_H_
