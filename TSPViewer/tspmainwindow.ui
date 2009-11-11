@@ -32,7 +32,7 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="3">
+    <item row="0" column="6">
      <spacer name="horizontalSpacer">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -45,13 +45,37 @@
       </property>
      </spacer>
     </item>
-    <item row="1" column="0" colspan="4">
+    <item row="1" column="0" colspan="7">
      <widget class="QGraphicsView" name="pQt_graphicsView"/>
     </item>
-    <item row="0" column="2">
+    <item row="0" column="3">
      <widget class="QLabel" name="pQt_label_distance">
       <property name="text">
-       <string>distance</string>
+       <string>0</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="2">
+     <widget class="QLabel" name="label_2">
+      <property name="text">
+       <string>distance : </string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="4">
+     <widget class="QLabel" name="label_3">
+      <property name="text">
+       <string>steps : </string>
+      </property>
+      <property name="indent">
+       <number>12</number>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="5">
+     <widget class="QLabel" name="pQt_label_progression">
+      <property name="text">
+       <string>0/0</string>
       </property>
      </widget>
     </item>

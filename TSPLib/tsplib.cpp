@@ -64,6 +64,7 @@ TSPLib::getPathLength( void )
     return length;
 }
 
+
 //----------------------------------------------------------------------------------
 void
 TSPLib::freeMemory( void )

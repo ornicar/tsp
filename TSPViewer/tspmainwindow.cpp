@@ -71,6 +71,8 @@ TSPMainWindow::refreshView( void )
 
     ui->pQt_label_distance->setText(QString::number(TSPLib::getPathLength()));
 
+    ui->pQt_label_progression->setText(QString("%0/%1").arg(TSPLib::getNbEdges()).arg(TSPLib::getNbPoints()));
+
     int nbPoints = TSPLib::getNbPoints() ;
     Point *points = TSPLib::getPoints() ;
     int *path = TSPLib::getPath() ;
