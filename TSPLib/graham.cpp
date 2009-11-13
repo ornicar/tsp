@@ -64,7 +64,7 @@ public:
 
     int findIndexByCoords(double x, double y)
     {
-        int i;
+        unsigned int i;
         for(i=0; i<N; i++)
         {
             if (points[i].x == x && points[i].y == y)
@@ -108,8 +108,8 @@ public:
         // Now put the remaining points in one of the two output sequences
         //
 
-        size_t i ;
-        for ( size_t i = 0 ; i < raw_points.size() ; i++ )
+        size_t i, nbRawPoints = raw_points.size() ;
+        for ( i = 0 ; i < nbRawPoints ; i++ )
         {
             double dir = direction( left, right, raw_points[ i ] );
             if ( dir < 0 )

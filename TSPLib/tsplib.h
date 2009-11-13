@@ -15,8 +15,7 @@ class TSPLIB_EXPORT TSPLib
             static int m_nbEdges ;
             static int *m_path ;
 
-            static int m_nbFreePoints ;
-            static int *m_freePoints ;
+            static bool *m_freePoints ;
             static int *m_bestPoints ;
             static double *m_bestPointsDistance ;
 
@@ -37,10 +36,9 @@ class TSPLIB_EXPORT TSPLib
     protected :
 
             static void freeMemory( void ) ;
-            static void updateFreePointsSet( void ) ;
+            static void updateFreePoints( void ) ;
             static void computeNearestPoints( int iStart=0, int nbEdges=1 ) ;
             static int getEdgeWithLowerCost( void ) ;
-            static int getEdgeWithUpperCost( void ) ;
             static void computeRandomPath( void ) ;
             static void printPath( void );
             static void printFreePoints( void ) ;
