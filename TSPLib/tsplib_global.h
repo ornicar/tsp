@@ -10,6 +10,7 @@
 #  define TSPLIB_EXPORT Q_DECL_IMPORT
 #endif
 
+#define TSP_DISTANCE_MAX    (999999.0)
 
 typedef struct tPoint
 {

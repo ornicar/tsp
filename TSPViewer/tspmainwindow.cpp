@@ -21,13 +21,25 @@ TSPMainWindow::TSPMainWindow(QWidget *parent)
     ui->pQt_graphicsView->setResizeAnchor( QGraphicsView::AnchorViewCenter ) ;
 
     //
-    connect( ui->pQt_actionOpen, SIGNAL(triggered()), this, SLOT(openFile()) ) ;
-    connect( ui->pQt_actionRun, SIGNAL(triggered()), this, SLOT(run()) ) ;
-    connect( ui->pQt_actionComputeEnveloppe, SIGNAL(triggered()), this, SLOT(computeEnvelope()) ) ;
-    connect( ui->pQt_actionSplitEdge, SIGNAL(triggered()), this, SLOT(splitNextEdges()) ) ;
+    connect( ui->pQt_actionOpen, SIGNAL(triggered()), this, SLOT(openCSVFile()) ) ;
+    connect( ui->pQt_buttonGenVertices, SIGNAL(clicked()), this, SLOT(genVertices()) ) ;
+    connect( ui->pQt_buttonGenLevel, SIGNAL(clicked()), this, SLOT(genLevel()) ) ;
 
     //
-    this->readFile( "defi25.csv" ) ;
+    connect( ui->pQt_spinSceneWidth, SIGNAL(valueChanged(int)), this, SLOT(refreshView()) ) ;
+    connect( ui->pQt_spinSceneHeight, SIGNAL(valueChanged(int)), this, SLOT(refreshView()) ) ;
+
+    // scene related
+    QPen pen ;
+    QBrush brush ;
+
+    pen.setColor( QColor(Qt::red) ) ;
+    brush.setColor( QColor(Qt::lightGray) ) ;
+    brush.setStyle( Qt::SolidPattern ) ;
+    m_scene.addItem( &m_path ) ;
+    m_path.setZValue( 1.0 ) ;
+    m_path.setPen( pen ) ;
+    m_path.setBrush( brush ) ;
 }
 
 //----------------------------------------------------------------------------------
@@ -38,102 +50,146 @@ TSPMainWindow::~TSPMainWindow()
 
 //----------------------------------------------------------------------------------
 void
-TSPMainWindow::computeEnvelope( void )
+TSPMainWindow::genVertices( void )
 {
-    TSPLib::computeEnvelope() ;
+    int i, nbVertices = ui->pQt_spinNbVertices->value() ;
+    int sceneWidth = ui->pQt_spinSceneWidth->value() ;
+    int sceneHeight = ui->pQt_spinSceneHeight->value() ;
+    Point* vertices = new Point[nbVertices] ;
 
-    refreshView();
+    // init random seed
+    qsrand( time(NULL) ) ;
+
+    for( i=0; i<nbVertices; i++ )
+    {
+        vertices[i].x = sceneWidth * (double(qrand())/RAND_MAX) ;
+        vertices[i].y = sceneHeight * (double(qrand())/RAND_MAX) ;
+    }
+
+    // set lib input
+    TSPLib::instance()->setInput( nbVertices, vertices ) ;
+
+    // display generated points
+    refreshView() ;
+
+    // free memory
+    delete[] vertices ;
 }
 
 //----------------------------------------------------------------------------------
 void
-TSPMainWindow::splitNextEdges( void )
+TSPMainWindow::genLevel( void )
 {
-    int nbSteps = ui->pQt_spinNbSteps->value() ;
-    TSPLib::reduceEnvelope( nbSteps ) ;
+    TSPLib::instance()->Attach( this ) ;
 
-    refreshView();
+        TSPLib::instance()->computePath() ;
+
+    TSPLib::instance()->Detach( this ) ;
+
+    refreshView() ;
 }
 
 //----------------------------------------------------------------------------------
 void
-TSPMainWindow::run( void )
+TSPMainWindow::refreshSceneRect( void )
 {
-    TSPLib::computePath() ;
-    refreshView();
+    // scene bounding rect
+    int sceneWidth = ui->pQt_spinSceneWidth->value() ;
+    int sceneHeight = ui->pQt_spinSceneHeight->value() ;
+
+    //
+    m_scene.setBackgroundBrush( QBrush(QColor(Qt::darkBlue)) ) ;
+}
+
+//----------------------------------------------------------------------------------
+void
+TSPMainWindow::refreshPath( void )
+{
+    // retrieve info
+    Point *points = TSPLib::instance()->getPoints() ;
+    int *path = TSPLib::instance()->getPath() ;
+    int nbEdges = TSPLib::instance()->getNbEdges() ;
+
+    // draw edges
+    QPainterPath painterPath ;
+    // init path
+    if( nbEdges>0 )
+    {
+        double xPos = points[path[0]].x ;
+        double yPos = points[path[0]].y ;
+        painterPath.moveTo( xPos, yPos ) ;
+
+        // connect following points
+        int iPoint ;
+        for( iPoint=1; iPoint<nbEdges; iPoint++ )
+        {
+            xPos = points[path[iPoint]].x ;
+            yPos = points[path[iPoint]].y ;
+
+            painterPath.lineTo( xPos, yPos ) ;
+        }
+
+        // connect last edge
+        xPos = points[path[0]].x ;
+        yPos = points[path[0]].y ;
+        painterPath.lineTo( xPos, yPos ) ;
+    }
+
+    m_path.setPath( painterPath ) ;
+}
+
+//----------------------------------------------------------------------------------
+void
+TSPMainWindow::refreshVertices( void )
+{
+    // add points
+    int iPoint, nbPoints = TSPLib::instance()->getNbPoints() ;
+    Point *points = TSPLib::instance()->getPoints() ;
+    double xPos, yPos ;
+    QPoint textPos ;
+    QGraphicsRectItem *pRectItem ;
+    QFont font ;
+    font.setPointSizeF( 1.5 ) ;
+    QPen pen(QColor(Qt::green)) ;
+    QBrush brush(QColor(Qt::green)) ;
+
+    for( iPoint=0; iPoint<nbPoints; iPoint++ )
+    {
+        xPos = points[iPoint].x ;
+        yPos = points[iPoint].y ;
+
+        pRectItem = new QGraphicsRectItem( xPos, yPos, TSP_POINT_SIZE, TSP_POINT_SIZE, NULL, &m_scene ) ;
+        pRectItem->setZValue( 2.0 ) ;
+        pRectItem->setPen( pen ) ;
+        pRectItem->setBrush( brush ) ;
+
+        /*
+        QGraphicsSimpleTextItem *pTextItem = new QGraphicsSimpleTextItem( QString::number(iPoint), NULL, &m_scene ) ;
+        pTextItem->setPos( xPos+1.5, yPos ) ;
+        pTextItem->setFont( font ) ;
+        */
+    }
 }
 
 //----------------------------------------------------------------------------------
 void
 TSPMainWindow::refreshView( void )
 {
-    m_scene.clear();
+    refreshSceneRect() ;
+    refreshPath() ;
+    refreshVertices() ;
 
-    ui->pQt_label_distance->setText(QString::number(TSPLib::getPathLength()));
 
-    ui->pQt_label_progression->setText(QString("%0/%1").arg(TSPLib::getNbEdges()).arg(TSPLib::getNbPoints()));
+    // scene bounding rect
+    int sceneWidth = ui->pQt_spinSceneWidth->value() ;
+    int sceneHeight = ui->pQt_spinSceneHeight->value() ;
 
-    int nbPoints = TSPLib::getNbPoints() ;
-    Point *points = TSPLib::getPoints() ;
-    int *path = TSPLib::getPath() ;
-    int nbEdges = TSPLib::getNbEdges() ;
-
-    // add points
-    int iPoint ;
-    double offset = 0 ;//0.5*TSP_POINT_SIZE ;
-    QBrush brush ;
-    brush.setStyle( Qt::SolidPattern ) ;
-    QPen pen = QPen(QColor(Qt::green)) ;
-    QFont font ;
-    font.setPointSizeF( 1.5 ) ;
-
-    QPoint textPos ;
-    for( iPoint=0; iPoint<nbPoints; iPoint++ )
-    {
-        double xPos = TSP_SCALE_FACTOR*(points[iPoint].x-offset) ;
-        double yPos = TSP_SCALE_FACTOR*(points[iPoint].y-offset) ;
-
-        QGraphicsRectItem *pPointItem = m_scene.addRect( xPos, yPos, TSP_POINT_SIZE, TSP_POINT_SIZE, pen, brush ) ;
-
-        QGraphicsSimpleTextItem *pTextItem = new QGraphicsSimpleTextItem( QString::number(iPoint), NULL, &m_scene ) ;
-        pTextItem->setPos( xPos+1.5, yPos ) ;
-        pTextItem->setFont( font ) ;
-    }
-
-    // add edges
-    QPainterPath painterPath ;
-    // init path
-    if( nbEdges>0 )
-    {
-        double xPos = TSP_SCALE_FACTOR*( points[path[0]].x-offset ) ;
-        double yPos = TSP_SCALE_FACTOR*( points[path[0]].y-offset ) ;
-        painterPath.moveTo( xPos, yPos ) ;
-
-        // connect following points
-        for( iPoint=1; iPoint<nbEdges; iPoint++ )
-        {
-            xPos = TSP_SCALE_FACTOR*( points[path[iPoint]].x-offset ) ;
-            yPos = TSP_SCALE_FACTOR*( points[path[iPoint]].y-offset ) ;
-
-            painterPath.lineTo( xPos, yPos ) ;
-        }
-
-        // connect last edge
-        xPos = TSP_SCALE_FACTOR*( points[path[0]].x-offset ) ;
-        yPos = TSP_SCALE_FACTOR*( points[path[0]].y-offset ) ;
-        painterPath.lineTo( xPos, yPos ) ;
-    }
-
-    pen.setColor( QColor(Qt::red) ) ;
-    brush.setStyle( Qt::NoBrush ) ;
-    m_scene.addPath( painterPath, pen, brush ) ;
-
-    ui->pQt_graphicsView->fitInView( 0.0, 0.0, TSP_SCALE_FACTOR, TSP_SCALE_FACTOR, Qt::KeepAspectRatio ) ;
+    ui->pQt_graphicsView->fitInView( 0.0, 0.0, sceneWidth, sceneHeight, Qt::KeepAspectRatio ) ;
 }
 
 //----------------------------------------------------------------------------------
 bool
-TSPMainWindow::openFile( QString path )
+TSPMainWindow::openCSVFile( QString path )
 {
     if( path.isEmpty()==true )
     {
@@ -188,13 +244,13 @@ TSPMainWindow::readFile( const QString & path )
             }
 
             //
-            TSPLib::setInput( nbPoints, points ) ;
-
-            // refresh view
-            refreshView() ;
+            TSPLib::instance()->setInput( nbPoints, points ) ;
 
             // free memory
             delete[] points ;
+
+            // refresh view
+            refreshView() ;
         }
         else
         {
@@ -206,4 +262,14 @@ TSPMainWindow::readFile( const QString & path )
         qWarning( "File does not exist" ) ;
     }
     return false ;
+}
+
+//----------------------------------------------------------------------------------
+void
+TSPMainWindow::Update( TSPLibObserved * pObserved )
+{
+    TSPLib *pLib = dynamic_cast<TSPLib*>(pObserved) ;
+
+    qApp->processEvents() ;
+    refreshPath() ;
 }

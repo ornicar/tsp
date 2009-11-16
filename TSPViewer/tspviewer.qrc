@@ -1,10 +1,19 @@
 <RCC>
   <qresource>
+    <file>icons/optimize.png</file>
+    <file>icons/apple.png</file>
+    <file>icons/killer.png</file>
     <file>icons/enveloppe.png</file>
     <file>icons/step.png</file>
     <file>icons/about.png</file>
     <file>icons/run.png</file>
     <file>icons/open.png</file>
+    <file>icons/layer-select-point.png</file>
+    <file>icons/layer-shape-line.png</file>
+    <file>icons/layer-shape-polygon.png</file>
+    <file>icons/pencil.png</file>
+    <file>icons/vertices.png</file>
+    <file>icons/wand.png</file>
     <file>icons/quit.png</file>
   </qresource>
 </RCC>

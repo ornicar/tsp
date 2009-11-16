@@ -3,46 +3,55 @@
 #define _TSPLIB_H_
 
 #include "tsplib_global.h"
+#include "tsplibobserver.h"
 #include <stdlib.h>
 
 
-class TSPLIB_EXPORT TSPLib
+class TSPLIB_EXPORT TSPLib : public TSPLibObserved
 {
     protected :
 
-            static int m_nbPoints ;
-            static Point *m_points ;
-            static int m_nbEdges ;
-            static int *m_path ;
+            static  TSPLib* p_instance ;
 
-            static bool *m_freePoints ;
-            static int *m_bestPoints ;
-            static double *m_bestPointsDistance ;
+            int      m_nbPoints ;
+            Point*   m_points ;
+            int      m_nbEdges ;
+            int*     m_path ;
 
-    public :
-
-            static void setInput( int nbPoints, Point * points ) ;
-            static void computePath( void ) ;
-            static int getNbEdges( void ) ;
-            static int* getPath( void ) ;
-            static int getNbPoints( void ) ;
-            static Point* getPoints( void ) ;
-
-            static void computeEnvelope( void ) ;
-            static void reduceEnvelope( int nbSteps ) ;
-
-            static double getPathLength( void ) ;
+            bool*    m_freePoints ;
+            double** m_edge2Point ;
 
     protected :
 
-            static void freeMemory( void ) ;
-            static void updateFreePoints( void ) ;
-            static void computeNearestPoints( int iStart=0, int nbEdges=1 ) ;
-            static int getEdgeWithLowerCost( void ) ;
-            static void computeRandomPath( void ) ;
-            static void printPath( void );
-            static void printFreePoints( void ) ;
-            static bool intersect( int idx1, int idx2, int idx3, int idx4 ) ;
+                    TSPLib( void ) ;
+                    ~TSPLib( void ) ;
+
+    public :
+
+    static  TSPLib* instance( void ) ;
+
+            void     setInput( int nbPoints, Point * points ) ;
+            void     computePath( void ) ;
+            int      getNbEdges( void ) ;
+            int*     getPath( void ) ;
+            int      getNbPoints( void ) ;
+            Point*   getPoints( void ) ;
+            double   getPathLength( void ) ;
+
+    protected :
+
+            void     freeMemory( void ) ;
+            void     computeEnvelope( void ) ;
+            void     reduceEnvelope( int nbSteps ) ;
+            void     localOptimization( void ) ;
+            void     updateFreePoints( void ) ;
+            void     computeNearestPoints( int iStart=0, int nbEdges=1 ) ;
+            void     removeFreePoint( int pointToRemove ) ;
+            double   computeDistance( int idx1, int idx2 ) ;
+            int      getEdgeWithLowerCost( int & nearestPoint ) ;
+            void     printPath( void );
+            void     printFreePoints( void ) ;
+            bool     intersect( int idx1, int idx2, int idx3, int idx4 ) ;
 } ;
 
 #endif // _TSPLIB_H_

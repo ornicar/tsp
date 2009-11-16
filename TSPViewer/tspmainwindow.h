@@ -3,37 +3,52 @@
 
 #include <QtGui/QMainWindow>
 #include <QGraphicsScene>
+#include <QGraphicsPathItem>
 
-#define TSP_POINT_SIZE      (1.0)
+#include "tsplibobserver.h"
+
+#define TSP_POINT_SIZE      (0.1)
 #define TSP_SCALE_FACTOR    (100.0)
+
+class QGraphicsPathItem ;
 
 namespace Ui
 {
     class TSPMainWindow;
 }
 
-class TSPMainWindow : public QMainWindow
+class TSPMainWindow :   public QMainWindow,
+                        public TSPLibObserver
 {
     Q_OBJECT
 
-private:
-    Ui::TSPMainWindow *ui;
-    QGraphicsScene  m_scene ;
+    private:
+        Ui::TSPMainWindow *ui;
+        QGraphicsScene  m_scene ;
+        QGraphicsPathItem m_path ;
 
-public:
+    public:
 
-    TSPMainWindow(QWidget *parent = 0);
-    ~TSPMainWindow();
+        TSPMainWindow(QWidget *parent = 0);
+        ~TSPMainWindow();
 
-    bool readFile( const QString & path ) ;
+        bool readFile( const QString & path ) ;
 
-public slots :
+        // pattern observer
+        virtual void Update( TSPLibObserved * pObserved ) ;
 
-    bool openFile( QString path="" ) ;
-    void computeEnvelope( void ) ;
-    void splitNextEdges( void ) ;
-    void run( void ) ;
-    void refreshView( void ) ;
+    public slots :
+
+        bool openCSVFile( QString path="" ) ;
+        void genVertices( void ) ;
+        void genLevel( void ) ;
+
+    protected slots :
+
+        void refreshView( void ) ;
+        void refreshSceneRect( void ) ;
+        void refreshPath( void ) ;
+        void refreshVertices( void ) ;
 };
 
 #endif // TSPMAINWINDOW_H
